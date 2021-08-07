@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.activity_sign_in.et_email
 import kotlinx.android.synthetic.main.activity_sign_in.et_password
 
 class SignInActivity : BaseActivity() {
+    //commit check
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

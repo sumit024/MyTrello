@@ -1,7 +1,6 @@
 package com.app_devs.mytrello.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
@@ -12,7 +11,6 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.activity_sign_in.et_email
 import kotlinx.android.synthetic.main.activity_sign_in.et_password
-import kotlinx.android.synthetic.main.activity_sign_up.*
 
 class SignInActivity : BaseActivity() {
     private lateinit var auth: FirebaseAuth
@@ -47,11 +45,12 @@ class SignInActivity : BaseActivity() {
                 {
 
                    // startActivity(Intent(this,MainActivity::class.java))
-                    FireStoreClass().signInUser(this)
+                    FireStoreClass().loadUserData(this)
                 }
                 else
                 {
                     Toast.makeText(this,"SignIn Failed", Toast.LENGTH_SHORT).show()
+                    hideProgressDialog()
                 }
             }
 

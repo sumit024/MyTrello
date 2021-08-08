@@ -2,6 +2,7 @@ package com.app_devs.mytrello.firebase
 
 import android.app.Activity
 import android.util.Log
+import android.widget.Toast
 import com.app_devs.mytrello.activities.MainActivity
 import com.app_devs.mytrello.activities.MyProfile
 import com.app_devs.mytrello.activities.SignInActivity
@@ -58,6 +59,23 @@ class FireStoreClass {
                 Log.e("SignInUser","Error writing document",e)
 
             }
+    }
+
+    fun updateUserProfileData(activity: MyProfile,userHashMap:HashMap<String,Any>)
+    {
+        mFireStore.collection(Constants.USERS)
+            .document(getCurrentUserId()).update(userHashMap).addOnSuccessListener {
+                Log.e(activity.javaClass.simpleName,"Profile Data Updated")
+                Toast.makeText(activity,"Updated Successfully!",Toast.LENGTH_SHORT).show()
+                activity.profileUpdateSuccess()
+            }.addOnFailureListener {
+                e->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName,"Profile Data not Updated",e)
+                Toast.makeText(activity,"Error in updating!",Toast.LENGTH_SHORT).show()
+            }
+
+
     }
     fun getCurrentUserId():String
     {

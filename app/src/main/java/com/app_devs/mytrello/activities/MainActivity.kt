@@ -12,6 +12,7 @@ import androidx.core.view.GravityCompat
 import com.app_devs.mytrello.R
 import com.app_devs.mytrello.firebase.FireStoreClass
 import com.app_devs.mytrello.models.User
+import com.app_devs.mytrello.utils.Constants
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -25,6 +26,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     companion object{
         const val MY_PROFILE_REQUEST_CODE=11
     }
+    private lateinit var mUserName:String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -33,7 +35,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         FireStoreClass().loadUserData(this)
 
         fab_create_board.setOnClickListener {
-            startActivity(Intent(this, CreateBoardActivity::class.java))
+
+            val intent=Intent(this, CreateBoardActivity::class.java)
+            intent.putExtra(Constants.NAME,mUserName)
+            startActivity(intent)
+
         }
 
     }
@@ -99,6 +105,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     fun updateNavigationUserDetails(user: User) {
+        mUserName=user.name
         Glide.with(this).load(user.image)
                 .centerCrop()
                 .placeholder(R.drawable.ic_user_place_holder)
@@ -108,8 +115,4 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     }
 
-
-    fun viewFullScreen(view: View) {
-
-    }
 }

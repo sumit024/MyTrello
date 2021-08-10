@@ -6,22 +6,33 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.app_devs.mytrello.R
+import com.app_devs.mytrello.firebase.FireStoreClass
+import com.app_devs.mytrello.models.Board
 import com.app_devs.mytrello.utils.Constants
 import com.bumptech.glide.Glide
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_create_board.*
 import kotlinx.android.synthetic.main.activity_my_profile.*
 import java.io.IOException
 
-class CreateBoardActivity : AppCompatActivity() {
+class CreateBoardActivity : BaseActivity() {
     private var mSelectedImageUri:Uri?=null
+    private lateinit var mUsername:String
+
+    private var mBoardImageUri:String=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_board)
         setUpActionBar()
+        if(intent.hasExtra(Constants.NAME))
+        {
+            mUsername= intent.getStringExtra(Constants.NAME).toString()
+        }
         iv_board_image.setOnClickListener {
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED)
@@ -34,6 +45,17 @@ class CreateBoardActivity : AppCompatActivity() {
                         arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
                         Constants.READ_EXTERNAL_STORAGE_CODE)
 
+            }
+        }
+        btn_create.setOnClickListener {
+            if(mSelectedImageUri!=null)
+            {
+                uploadBoardImage()
+            }
+            else
+            {
+                showProgressDialog(resources.getString(R.string.please_wait))
+                createBoard()
             }
         }
     }
@@ -77,6 +99,55 @@ class CreateBoardActivity : AppCompatActivity() {
             onBackPressed()
         }
 
+    }
+    fun boardCreatedSuccessfully()
+    {
+        hideProgressDialog()
+        finish()
+    }
+
+    private fun createBoard()
+    {
+        val assignedUserArrayList:ArrayList<String> = ArrayList()
+        assignedUserArrayList.add(getCurrentUserId())
+
+        val board=Board(et_board_name.text.toString(),mBoardImageUri,mUsername,assignedUserArrayList)
+        FireStoreClass().createBoard(this,board)
+
+    }
+    private fun uploadBoardImage()
+    {
+        showProgressDialog(resources.getString(R.string.please_wait))
+        if(mSelectedImageUri!=null)
+        {
+            val storageReference= FirebaseStorage.getInstance()
+                    .reference
+                    .child("Board Image"+ System.currentTimeMillis()+"."+Constants.getFileExtension(this,mSelectedImageUri))
+            storageReference.putFile(mSelectedImageUri!!).addOnSuccessListener {
+
+                taskSnapShot->
+                hideProgressDialog()
+                Log.e("Firebase Image Url",taskSnapShot.metadata!!.reference!!.downloadUrl.toString())
+                // Get the downloadable url from the task snapshot
+                taskSnapShot.metadata!!.reference!!.downloadUrl
+                        .addOnSuccessListener { uri ->
+                            Log.e("Downloadable Image URL", uri.toString())
+
+                            // assign the image url to the variable.
+                            mBoardImageUri = uri.toString()
+
+                            createBoard()
+
+                        }
+
+            }.addOnFailureListener{
+                exception->
+                hideProgressDialog()
+                Toast.makeText(this,exception.message,Toast.LENGTH_LONG).show()
+            }
+
+
+        }
     }
 
 }

@@ -15,7 +15,6 @@
         android:layout_marginStart="@dimen/nav_content_margin_StartEnd"
         android:layout_marginEnd="@dimen/nav_content_margin_StartEnd"
         android:contentDescription="@string/image_contentDescription"
-        android:onClick="viewFullScreen"
         android:src="@drawable/ic_user_place_holder"
         app:civ_border_color="@android:color/white"
         app:civ_border_width="@dimen/nav_image_circular_border_width" />

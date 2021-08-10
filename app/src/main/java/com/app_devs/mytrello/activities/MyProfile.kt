@@ -33,6 +33,7 @@ class MyProfile : BaseActivity() {
     private var mSelectedImageUri:Uri?=null
     private var mProfileImageURL:String=""
 
+
     private lateinit var mUserDetails:User
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -3,10 +3,8 @@ package com.app_devs.mytrello.firebase
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
-import com.app_devs.mytrello.activities.MainActivity
-import com.app_devs.mytrello.activities.MyProfile
-import com.app_devs.mytrello.activities.SignInActivity
-import com.app_devs.mytrello.activities.SignUpActivity
+import com.app_devs.mytrello.activities.*
+import com.app_devs.mytrello.models.Board
 import com.app_devs.mytrello.models.User
 import com.app_devs.mytrello.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -87,5 +85,22 @@ class FireStoreClass {
         }
         return currentUserId
 
+    }
+
+    fun createBoard(activity: CreateBoardActivity, board: Board)
+    {
+        mFireStore.collection(Constants.BOARDS)
+                .document()
+                .set(board, SetOptions.merge())
+                .addOnSuccessListener {
+                    Log.e(activity.javaClass.simpleName,"Profile Data Updated")
+                    Toast.makeText(activity,"Board Created Successfully!",Toast.LENGTH_SHORT).show()
+                    activity.boardCreatedSuccessfully()
+                }.addOnFailureListener{
+                    e->
+                    activity.hideProgressDialog()
+                    Log.e(activity.javaClass.simpleName,"Profile Data not Updated",e)
+                    Toast.makeText(activity,"Error in creating!",Toast.LENGTH_SHORT).show()
+                }
     }
 }

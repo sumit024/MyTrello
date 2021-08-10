@@ -5,6 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.core.view.GravityCompat
 import com.app_devs.mytrello.R
 import com.app_devs.mytrello.firebase.FireStoreClass
@@ -15,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
+
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -27,6 +31,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setUpActionBar()
         nav_view.setNavigationItemSelectedListener(this)
         FireStoreClass().loadUserData(this)
+
+        fab_create_board.setOnClickListener {
+            startActivity(Intent(this, CreateBoardActivity::class.java))
+        }
+
     }
 
     private fun setUpActionBar()
@@ -62,24 +71,27 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
         else
         {
-            Log.e("Cancelled","Cancelled")
+            Log.e("Cancelled", "Cancelled")
         }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
        when(item.itemId)
        {
-           R.id.nav_my_profile->{
-               val intent=Intent(this,MyProfile::class.java)
+           R.id.nav_my_profile -> {
+               val intent = Intent(this, MyProfile::class.java)
                startActivityForResult(intent, MY_PROFILE_REQUEST_CODE)
 
            }
-           R.id.nav_sign_out-> {
+           R.id.nav_sign_out -> {
                FirebaseAuth.getInstance().signOut()
-               val intent=Intent(this,IntroActivity::class.java)
+               val intent = Intent(this, IntroActivity::class.java)
                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                startActivity(intent)
                finish()
+           }
+           R.id.iv_user_image->{
+
            }
        }
         drawer_layout.closeDrawer(GravityCompat.START)
@@ -94,7 +106,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         tv_username.text=user.name
 
+    }
 
+
+    fun viewFullScreen(view: View) {
 
     }
 }

@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.app_devs.mytrello">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -13,24 +13,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyTrello">
-        <activity android:name=".activities.MyProfile"
+        <activity android:name=".activities.CreateBoardActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/customTheme">
+            android:theme="@style/themeForOthers"
+            >
+
+        </activity>
+        <activity
+            android:name=".activities.MyProfile"
+            android:screenOrientation="portrait"
+            android:theme="@style/themeForOthers">
 
         </activity>
         <activity android:name=".activities.BaseActivity" />
         <activity
             android:name=".activities.SignInActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/customTheme" />
+            android:theme="@style/themeForOthers" />
         <activity
             android:name=".activities.SignUpActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/customTheme" />
+            android:theme="@style/themeForOthers" />
         <activity
             android:name=".activities.IntroActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/customTheme" />
+            android:theme="@style/themeForOthers" />
         <activity
             android:name=".activities.SplashActivity"
             android:screenOrientation="portrait"
@@ -44,7 +51,7 @@
         <activity
             android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/customTheme" />
+            android:theme="@style/themeForOthers" />
     </application>
 
 </manifest>

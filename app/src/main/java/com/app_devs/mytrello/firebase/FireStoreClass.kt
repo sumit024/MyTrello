@@ -26,7 +26,7 @@ class FireStoreClass {
 
     }
     //signIn
-    fun loadUserData(activity: Activity)
+    fun loadUserData(activity: Activity, readBoardsList:Boolean=false)
     {
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserId()).get()
@@ -38,7 +38,7 @@ class FireStoreClass {
                     is SignInActivity->
                         activity.signInSuccess(loggedInUser)
                     is MainActivity->
-                        activity.updateNavigationUserDetails(loggedInUser)
+                        activity.updateNavigationUserDetails(loggedInUser,readBoardsList)
                     is MyProfile->
                         activity.setProfileUI(loggedInUser)
 
@@ -102,5 +102,30 @@ class FireStoreClass {
                     Log.e(activity.javaClass.simpleName,"Profile Data not Updated",e)
                     Toast.makeText(activity,"Error in creating!",Toast.LENGTH_SHORT).show()
                 }
+    }
+
+    fun getBoardsList(activity: MainActivity){
+        mFireStore.collection(Constants.BOARDS).whereArrayContains(Constants.ASSIGNED_TO,getCurrentUserId()).get().addOnSuccessListener {
+            document->
+            Log.e(activity.javaClass.simpleName,document.documents.toString())
+
+            val boardsList: ArrayList<Board> = ArrayList()
+            // A for loop as per the list of documents to convert them into Boards ArrayList.
+            for (i in document.documents) {
+
+                val board = i.toObject(Board::class.java)!!
+                board.documentId = i.id
+                boardsList.add(board)
+            }
+
+            // Here pass the result to the base activity.
+            activity.populateBoardsListToUi(boardsList)
+
+        }.addOnFailureListener {
+            e->
+            activity.hideProgressDialog()
+            Log.e(activity.javaClass.simpleName,"Error in creating",e)
+           // Toast.makeText(activity,"Error in creating!",Toast.LENGTH_SHORT).show()
+        }
     }
 }

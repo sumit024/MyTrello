@@ -15,6 +15,7 @@ object Constants {
     const val IMAGE:String="image"
     const val MOBILE:String="mobile"
     const val BOARDS:String="boards"
+    const val ASSIGNED_TO:String="assignedTo"
 
     const val READ_EXTERNAL_STORAGE_CODE=1
     const val IMAGE_PICK_REQUEST_CODE =2

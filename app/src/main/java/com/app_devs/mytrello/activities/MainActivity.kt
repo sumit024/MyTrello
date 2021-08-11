@@ -9,8 +9,11 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.view.GravityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.app_devs.mytrello.R
+import com.app_devs.mytrello.adapters.BoardItemsAdapter
 import com.app_devs.mytrello.firebase.FireStoreClass
+import com.app_devs.mytrello.models.Board
 import com.app_devs.mytrello.models.User
 import com.app_devs.mytrello.utils.Constants
 import com.bumptech.glide.Glide
@@ -18,6 +21,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 
@@ -32,7 +36,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setContentView(R.layout.activity_main)
         setUpActionBar()
         nav_view.setNavigationItemSelectedListener(this)
-        FireStoreClass().loadUserData(this)
+        FireStoreClass().loadUserData(this,true)
 
         fab_create_board.setOnClickListener {
 
@@ -42,6 +46,26 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         }
 
+    }
+
+    fun populateBoardsListToUi(list:ArrayList<Board>)
+    {
+        hideProgressDialog()
+        if(list.size>0)
+        {
+            rv_boards_list.visibility=View.VISIBLE
+            tv_no_boards_available.visibility=View.GONE
+            rv_boards_list.layoutManager=LinearLayoutManager(this)
+            rv_boards_list.setHasFixedSize(true)
+
+            val adapter=BoardItemsAdapter(this,list)
+            rv_boards_list.adapter=adapter
+
+        }
+        else{
+            rv_boards_list.visibility=View.GONE
+            tv_no_boards_available.visibility=View.VISIBLE
+        }
     }
 
     private fun setUpActionBar()
@@ -104,7 +128,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
-    fun updateNavigationUserDetails(user: User) {
+    fun updateNavigationUserDetails(user: User,readBoardsToList:Boolean) {
         mUserName=user.name
         Glide.with(this).load(user.image)
                 .centerCrop()
@@ -112,6 +136,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 .into(iv_user_image)
 
         tv_username.text=user.name
+        if(readBoardsToList)
+        {
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FireStoreClass().getBoardsList(this)
+        }
 
     }
 

@@ -28,10 +28,12 @@ class FireStoreClass {
     //signIn
     fun loadUserData(activity: Activity, readBoardsList:Boolean=false)
     {
+
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserId()).get()
             .addOnSuccessListener {
                 document->
+
                 val loggedInUser=document.toObject(User::class.java)!!
                 when(activity)
                 {
@@ -51,6 +53,8 @@ class FireStoreClass {
                     is SignInActivity->
                         activity.hideProgressDialog()
                     is MainActivity->
+                        activity.hideProgressDialog()
+                    is MyProfile->
                         activity.hideProgressDialog()
 
                 }

@@ -29,6 +29,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     companion object{
         const val MY_PROFILE_REQUEST_CODE=11
+        const val CREATE_BOARD_REQUEST_CODE=12
     }
     private lateinit var mUserName:String
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +43,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             val intent=Intent(this, CreateBoardActivity::class.java)
             intent.putExtra(Constants.NAME,mUserName)
-            startActivity(intent)
+            startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
 
         }
 
@@ -98,6 +99,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if(resultCode==Activity.RESULT_OK && requestCode== MY_PROFILE_REQUEST_CODE)
         {
             FireStoreClass().loadUserData(this)
+        }
+        else if(resultCode==Activity.RESULT_OK && requestCode== CREATE_BOARD_REQUEST_CODE)
+        {
+            FireStoreClass().getBoardsList(this)
         }
         else
         {

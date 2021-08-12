@@ -21,7 +21,6 @@ class FireStoreClass {
             .document(getCurrentUserId()).set(userInfo, SetOptions.merge())
             .addOnSuccessListener {
                 activity.userRegisteredSuccess()
-
             }
 
     }

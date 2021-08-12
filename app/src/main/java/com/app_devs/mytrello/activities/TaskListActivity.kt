@@ -12,7 +12,7 @@ import com.app_devs.mytrello.models.Task
 import com.app_devs.mytrello.utils.Constants
 import kotlinx.android.synthetic.main.activity_my_profile.*
 import kotlinx.android.synthetic.main.activity_task_list.*
-//comitt check
+//commit check
 class TaskListActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

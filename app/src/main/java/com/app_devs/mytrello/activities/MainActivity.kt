@@ -17,6 +17,7 @@ import com.app_devs.mytrello.models.Board
 import com.app_devs.mytrello.models.User
 import com.app_devs.mytrello.utils.Constants
 import com.bumptech.glide.Glide
+import com.google.android.gms.tasks.Task
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
@@ -61,6 +62,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             val adapter=BoardItemsAdapter(this,list)
             rv_boards_list.adapter=adapter
+            adapter.onClickListener(object :BoardItemsAdapter.OnClickListener{
+                override fun onClick(position: Int, board: Board) {
+                    val intent=Intent(this@MainActivity,TaskListActivity::class.java)
+                    intent.putExtra(Constants.DOCUMENT_ID,board.documentId)
+                    startActivity(intent)
+                    
+                }
+            })
 
         }
         else{

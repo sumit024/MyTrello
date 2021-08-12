@@ -108,6 +108,23 @@ class FireStoreClass {
                 }
     }
 
+    fun getBoardDetails(activity: TaskListActivity,documentId:String)
+    {
+        mFireStore.collection(Constants.BOARDS).document(documentId).get().addOnSuccessListener {
+            document->
+            Log.e(activity.javaClass.simpleName,document.toString())
+
+            activity.boardDetails(document.toObject(Board::class.java)!!)
+
+
+        }.addOnFailureListener {
+            e->
+            activity.hideProgressDialog()
+            Log.e(activity.javaClass.simpleName,"Error in creating",e)
+            // Toast.makeText(activity,"Error in creating!",Toast.LENGTH_SHORT).show()
+        }
+    }
+
     fun getBoardsList(activity: MainActivity){
         mFireStore.collection(Constants.BOARDS).whereArrayContains(Constants.ASSIGNED_TO,getCurrentUserId()).get().addOnSuccessListener {
             document->
@@ -116,7 +133,6 @@ class FireStoreClass {
             val boardsList: ArrayList<Board> = ArrayList()
             // A for loop as per the list of documents to convert them into Boards ArrayList.
             for (i in document.documents) {
-
                 val board = i.toObject(Board::class.java)!!
                 board.documentId = i.id
                 boardsList.add(board)

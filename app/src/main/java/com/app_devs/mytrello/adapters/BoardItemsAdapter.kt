@@ -54,4 +54,9 @@ open class BoardItemsAdapter(private val context: Context, private val list:Arra
 
     }
 
+    fun onClickListener(onClickListener: OnClickListener)
+    {
+        this.onClickListener=onClickListener
+    }
+
 }

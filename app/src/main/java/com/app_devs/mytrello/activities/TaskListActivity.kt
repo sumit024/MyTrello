@@ -3,6 +3,7 @@ package com.app_devs.mytrello.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.SyncStateContract
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app_devs.mytrello.R
 import com.app_devs.mytrello.adapters.TaskListItemsAdapter
@@ -14,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_my_profile.*
 import kotlinx.android.synthetic.main.activity_task_list.*
 //commit check
 class TaskListActivity : BaseActivity() {
+    private lateinit var mBoardDetails:Board
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_list)
@@ -26,12 +28,12 @@ class TaskListActivity : BaseActivity() {
         showProgressDialog(resources.getString(R.string.please_wait))
         FireStoreClass().getBoardDetails(this,boardDocumentId)
     }
-    private fun setUpActionBar(title:String)
+    private fun setUpActionBar()
     {
         setSupportActionBar(toolbar_task_list_activity)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_white_color_back_24dp)
-        supportActionBar?.title=title
+        supportActionBar?.title=mBoardDetails.name
         toolbar_task_list_activity.setNavigationOnClickListener {
             onBackPressed()
         }
@@ -39,6 +41,7 @@ class TaskListActivity : BaseActivity() {
     }
     fun boardDetails(board: Board)
     {
+        mBoardDetails=board
         hideProgressDialog()
         val addTaskList=Task(resources.getString(R.string.add_list))
         board.taskList.add(addTaskList)
@@ -47,6 +50,24 @@ class TaskListActivity : BaseActivity() {
         val adapter=TaskListItemsAdapter(this,board.taskList)
         rv_task_list.adapter=adapter
 
-        setUpActionBar(board.name)
+        setUpActionBar()
+    }
+
+    fun addUpdateTaskListSuccess()
+    {
+        hideProgressDialog()
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FireStoreClass().getBoardDetails(this,mBoardDetails.documentId)
+    }
+
+    fun createTaskList(taskListName:String)
+    {
+        Log.e("Task List Name", taskListName)
+        val task=Task(taskListName,FireStoreClass().getCurrentUserId())
+        mBoardDetails.taskList.add(0,task)
+        // Remove the last position as we have added the item manually for adding the TaskList.
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size-1)
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FireStoreClass().addUpdateTaskList(this,mBoardDetails)
     }
 }

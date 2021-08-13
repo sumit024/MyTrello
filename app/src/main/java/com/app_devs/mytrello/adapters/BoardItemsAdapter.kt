@@ -11,7 +11,8 @@ import com.app_devs.mytrello.models.Board
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_board.view.*
 
-open class BoardItemsAdapter(private val context: Context, private val list:ArrayList<Board>): RecyclerView.Adapter<RecyclerView.ViewHolder>()
+open class BoardItemsAdapter(private val context: Context, private val list:ArrayList<Board>)
+    : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
 
     private var onClickListener:OnClickListener?=null

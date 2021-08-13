@@ -112,8 +112,9 @@ class FireStoreClass {
         mFireStore.collection(Constants.BOARDS).document(documentId).get().addOnSuccessListener {
             document->
             Log.e(activity.javaClass.simpleName,document.toString())
-
-            activity.boardDetails(document.toObject(Board::class.java)!!)
+            val board=document.toObject(Board::class.java)!!
+            board.documentId=document.id
+            activity.boardDetails(board)
 
 
         }.addOnFailureListener {
@@ -122,6 +123,25 @@ class FireStoreClass {
             Log.e(activity.javaClass.simpleName,"Error in creating",e)
             // Toast.makeText(activity,"Error in creating!",Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun addUpdateTaskList(activity: TaskListActivity,board: Board)
+    {
+        val taskListHashMap=HashMap<String,Any>()
+        taskListHashMap[Constants.TASK_LIST]=board.taskList
+
+        mFireStore.collection(Constants.BOARDS)
+                .document(board.documentId)
+                .update(taskListHashMap)
+                .addOnSuccessListener {
+                    Log.e(activity.javaClass.simpleName,"TASK LIST UPDATED SUCCESSFULLY")
+                    activity.addUpdateTaskListSuccess()
+                }.addOnFailureListener{
+                    exception->
+                    activity.hideProgressDialog()
+                    Log.e(activity.javaClass.simpleName,"Error in creating",exception)
+                }
+
     }
 
     fun getBoardsList(activity: MainActivity){

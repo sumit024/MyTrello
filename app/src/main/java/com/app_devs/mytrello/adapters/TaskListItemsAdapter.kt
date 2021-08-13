@@ -2,16 +2,21 @@ package com.app_devs.mytrello.adapters
 
 import android.content.Context
 import android.content.res.Resources
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.app_devs.mytrello.R
+import com.app_devs.mytrello.activities.TaskListActivity
 import com.app_devs.mytrello.models.Task
 import kotlinx.android.synthetic.main.item_task.view.*
 
-open class TaskListItemsAdapter(private val context: Context,private val list:ArrayList<Task>):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+open class TaskListItemsAdapter(private val context: Context,private val list:ArrayList<Task>)
+    :RecyclerView.Adapter<RecyclerView.ViewHolder>()
+{
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.item_task,parent,false)
         // Here the layout params are converted dynamically according to the screen size
@@ -24,11 +29,13 @@ open class TaskListItemsAdapter(private val context: Context,private val list:Ar
         return MyViewHolder(view)
     }
 
+
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val model=list[position]
         if(holder is MyViewHolder)
         {
-            if(position==list.size-1)
+            if(position==list.size-1) // it means if position < 0
             {
                 holder.itemView.tv_add_task_list.visibility=View.VISIBLE
                 holder.itemView.ll_task_item.visibility=View.GONE
@@ -36,6 +43,35 @@ open class TaskListItemsAdapter(private val context: Context,private val list:Ar
                 holder.itemView.tv_add_task_list.visibility=View.GONE
                 holder.itemView.ll_task_item.visibility=View.VISIBLE
             }
+            holder.itemView.tv_task_list_title.text=model.title
+
+            holder.itemView.tv_add_task_list.setOnClickListener {
+                holder.itemView.tv_add_task_list.visibility=View.GONE
+                holder.itemView.cv_add_task_list_name.visibility=View.VISIBLE
+            }
+
+            holder.itemView.ib_close_list_name.setOnClickListener {
+                holder.itemView.tv_add_task_list.visibility=View.VISIBLE
+                holder.itemView.cv_add_task_list_name.visibility=View.GONE
+            }
+
+            holder.itemView.ib_done_list_name.setOnClickListener {
+                val listName = holder.itemView.et_task_list_name.text.toString()
+                if(listName.isNotEmpty())
+                {
+                    if(context is TaskListActivity)
+                    {
+                        Log.i("check",listName)
+                        context.createTaskList(listName)
+                    }
+                }
+                else
+                {
+                    holder.itemView.et_task_list_name.error="Can't be empty"
+                    holder.itemView.et_task_list_name.requestFocus()
+                }
+            }
+
         }
 
     }

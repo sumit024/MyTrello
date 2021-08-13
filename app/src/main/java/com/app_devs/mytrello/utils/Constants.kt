@@ -17,6 +17,7 @@ object Constants {
     const val BOARDS:String="boards"
     const val ASSIGNED_TO:String="assignedTo"
     const val DOCUMENT_ID:String="documentId"
+    const val TASK_LIST:String="taskList"
 
     const val READ_EXTERNAL_STORAGE_CODE=1
     const val IMAGE_PICK_REQUEST_CODE =2

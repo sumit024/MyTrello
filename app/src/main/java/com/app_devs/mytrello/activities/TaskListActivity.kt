@@ -9,10 +9,13 @@ import com.app_devs.mytrello.R
 import com.app_devs.mytrello.adapters.TaskListItemsAdapter
 import com.app_devs.mytrello.firebase.FireStoreClass
 import com.app_devs.mytrello.models.Board
+import com.app_devs.mytrello.models.Card
 import com.app_devs.mytrello.models.Task
 import com.app_devs.mytrello.utils.Constants
 import kotlinx.android.synthetic.main.activity_my_profile.*
 import kotlinx.android.synthetic.main.activity_task_list.*
+import java.text.FieldPosition
+
 //commit check
 class TaskListActivity : BaseActivity() {
     private lateinit var mBoardDetails:Board
@@ -69,5 +72,43 @@ class TaskListActivity : BaseActivity() {
         mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size-1)
         showProgressDialog(resources.getString(R.string.please_wait))
         FireStoreClass().addUpdateTaskList(this,mBoardDetails)
+    }
+
+    fun updateTaskList(position: Int,listName:String,model:Task)
+    {
+        val task=Task(listName,model.createdBy)
+        mBoardDetails.taskList[position]=task
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size-1)
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FireStoreClass().addUpdateTaskList(this,mBoardDetails)
+
+    }
+
+    fun deleteTaskList(position: Int)
+    {
+        mBoardDetails.taskList.removeAt(position)
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size-1)
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FireStoreClass().addUpdateTaskList(this,mBoardDetails)
+    }
+
+    fun addCardToTaskList(position: Int,cardName:String)
+    {
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size-1)
+        val cardAssignedUsers:ArrayList<String> = ArrayList()
+        cardAssignedUsers.add(FireStoreClass().getCurrentUserId())
+
+        val card=Card(cardName,FireStoreClass().getCurrentUserId(),cardAssignedUsers)
+        // boards k andar tasklist hai task k andar cards hai
+        val cardList=mBoardDetails.taskList[position].cards
+        cardList.add(card)
+
+        val task=Task(mBoardDetails.taskList[position].title,mBoardDetails.taskList[position].createdBy,cardList)
+
+        mBoardDetails.taskList[position]=task
+
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FireStoreClass().addUpdateTaskList(this,mBoardDetails)
+
     }
 }

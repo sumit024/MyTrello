@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_task_list.*
 import kotlinx.android.synthetic.main.dialog_search_member.*
 
 class MembersActivity : BaseActivity() {
+    //commit check
 
     private lateinit var mBoardDetails:Board
 

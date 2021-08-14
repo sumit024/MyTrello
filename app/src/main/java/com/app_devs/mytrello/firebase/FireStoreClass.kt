@@ -127,7 +127,7 @@ class FireStoreClass {
 
     fun addUpdateTaskList(activity: TaskListActivity,board: Board)
     {
-        val taskListHashMap=HashMap<String,Any>()
+        val taskListHashMap= HashMap<String, Any> ()
         taskListHashMap[Constants.TASK_LIST]=board.taskList
 
         mFireStore.collection(Constants.BOARDS)
@@ -166,5 +166,27 @@ class FireStoreClass {
             Log.e(activity.javaClass.simpleName,"Error in creating",e)
            // Toast.makeText(activity,"Error in creating!",Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun getAssignedMembersListDetail(activity: MembersActivity,assignedTo:ArrayList<String>)
+    {
+        mFireStore.collection(Constants.USERS)
+            .whereIn(Constants.ID,assignedTo)
+            .get()
+            .addOnSuccessListener {
+                document->
+                Log.e(activity.javaClass.simpleName,document.documents.toString())
+                val userList:ArrayList<User> = ArrayList()
+                for(i in document.documents){
+                    val user= i.toObject(User::class.java)!!
+                    userList.add(user)
+                }
+                activity.setUpMembersList(userList)
+            }.addOnFailureListener{
+                    e->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName,"Error in fetching",e)
+            }
+
     }
 }

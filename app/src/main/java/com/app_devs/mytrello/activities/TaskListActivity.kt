@@ -1,9 +1,12 @@
 package com.app_devs.mytrello.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.SyncStateContract
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app_devs.mytrello.R
 import com.app_devs.mytrello.adapters.TaskListItemsAdapter
@@ -31,6 +34,22 @@ class TaskListActivity : BaseActivity() {
         showProgressDialog(resources.getString(R.string.please_wait))
         FireStoreClass().getBoardDetails(this,boardDocumentId)
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_members,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_members-> {
+                val intent=Intent(this, MembersActivity::class.java)
+                intent.putExtra(Constants.BOARD_DETAIL,mBoardDetails)
+                startActivity(intent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
     private fun setUpActionBar()
     {
         setSupportActionBar(toolbar_task_list_activity)
@@ -52,7 +71,6 @@ class TaskListActivity : BaseActivity() {
         rv_task_list.setHasFixedSize(true)
         val adapter=TaskListItemsAdapter(this,board.taskList)
         rv_task_list.adapter=adapter
-
         setUpActionBar()
     }
 
@@ -63,6 +81,7 @@ class TaskListActivity : BaseActivity() {
         FireStoreClass().getBoardDetails(this,mBoardDetails.documentId)
     }
 
+    //creating a task
     fun createTaskList(taskListName:String)
     {
         Log.e("Task List Name", taskListName)
@@ -74,7 +93,7 @@ class TaskListActivity : BaseActivity() {
         FireStoreClass().addUpdateTaskList(this,mBoardDetails)
     }
 
-    fun updateTaskList(position: Int,listName:String,model:Task)
+    fun updateTaskList(position: Int, listName:String, model:Task)
     {
         val task=Task(listName,model.createdBy)
         mBoardDetails.taskList[position]=task
@@ -100,13 +119,13 @@ class TaskListActivity : BaseActivity() {
 
         val card=Card(cardName,FireStoreClass().getCurrentUserId(),cardAssignedUsers)
         // boards k andar tasklist hai task k andar cards hai
-        val cardList=mBoardDetails.taskList[position].cards
-        cardList.add(card)
 
-        val task=Task(mBoardDetails.taskList[position].title,mBoardDetails.taskList[position].createdBy,cardList)
+        val cardList = mBoardDetails.taskList[position].cards
+        cardList.add(card)
+        val task=Task(mBoardDetails.taskList[position].title, mBoardDetails.taskList[position].createdBy, cardList)
+
 
         mBoardDetails.taskList[position]=task
-
         showProgressDialog(resources.getString(R.string.please_wait))
         FireStoreClass().addUpdateTaskList(this,mBoardDetails)
 

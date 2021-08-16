@@ -1,5 +1,6 @@
 package com.app_devs.mytrello.activities
 
+import android.app.Activity
 import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,6 +22,9 @@ class MembersActivity : BaseActivity() {
     //commit check
 
     private lateinit var mBoardDetails:Board
+    private lateinit var mAssignedUsersList:ArrayList<User>
+
+    private var anyChangesMade:Boolean=false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +61,7 @@ class MembersActivity : BaseActivity() {
         dialog.tv_add.setOnClickListener {
             val email=dialog.et_email_search_member.text.toString()
             if(email.isNotEmpty()){
+                FireStoreClass().getMembersDetails(this,email)
                 Toast.makeText(this,"Added",Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
 
@@ -86,10 +91,31 @@ class MembersActivity : BaseActivity() {
     }
 
      fun setUpMembersList(list:ArrayList<User>){
+         mAssignedUsersList=list
         hideProgressDialog()
         rv_members_list.layoutManager=LinearLayoutManager(this)
         rv_members_list.setHasFixedSize(true)
         val adapter=MembersAdapter(this,list)
         rv_members_list.adapter=adapter
     }
+
+    fun memberDetails(user: User){
+        mBoardDetails.assignedTo.add(user.id)
+        FireStoreClass().assignMemberToBoard(this,mBoardDetails,user)
+    }
+    fun memberAssignSuccess(user: User){
+        hideProgressDialog()
+        mAssignedUsersList.add(user)
+        anyChangesMade=true
+        setUpMembersList(mAssignedUsersList)
+    }
+
+    override fun onBackPressed() {
+        if(anyChangesMade){
+            setResult(Activity.RESULT_OK)
+        }
+        super.onBackPressed()
+    }
+
+
 }

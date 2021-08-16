@@ -54,9 +54,8 @@ open class BaseActivity : AppCompatActivity() {
 
     fun showErrorSnackBar(message:String)
     {
-        val snackbar=Snackbar.make(findViewById(android.R.id.content),
-                message,
-                Snackbar.LENGTH_LONG)
+        val snackbar=Snackbar.make( findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG )
+
         val snackbarView = snackbar.view
         snackbarView.setBackgroundColor(ContextCompat.getColor(this,R.color.snackbar_error_color))
         snackbar.show()

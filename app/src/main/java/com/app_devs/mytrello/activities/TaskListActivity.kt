@@ -1,5 +1,6 @@
 package com.app_devs.mytrello.activities
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -22,17 +23,23 @@ import java.text.FieldPosition
 //commit check
 class TaskListActivity : BaseActivity() {
     private lateinit var mBoardDetails:Board
+    private lateinit var mBoardDocumentId:String
+
+    companion object{
+        const val MEMBER_REQUEST_CODE=13
+        const val CARD_DETAIL_REQUEST_CODE=14
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_list)
 
-        var boardDocumentId=""
+
         if(intent.hasExtra(Constants.DOCUMENT_ID))
         {
-            boardDocumentId=intent.getStringExtra(Constants.DOCUMENT_ID)!!
+            mBoardDocumentId=intent.getStringExtra(Constants.DOCUMENT_ID)!!
         }
         showProgressDialog(resources.getString(R.string.please_wait))
-        FireStoreClass().getBoardDetails(this,boardDocumentId)
+        FireStoreClass().getBoardDetails(this,mBoardDocumentId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -45,10 +52,24 @@ class TaskListActivity : BaseActivity() {
             R.id.action_members-> {
                 val intent=Intent(this, MembersActivity::class.java)
                 intent.putExtra(Constants.BOARD_DETAIL,mBoardDetails)
-                startActivity(intent)
+                startActivityForResult(intent, MEMBER_REQUEST_CODE)
+                return true
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode==Activity.RESULT_OK && requestCode== MEMBER_REQUEST_CODE || requestCode== CARD_DETAIL_REQUEST_CODE)
+        {
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FireStoreClass().getBoardDetails(this,mBoardDocumentId)
+        }
+        else
+        {
+            Log.e("Cancelled","Cancelled")
+        }
     }
     private fun setUpActionBar()
     {
@@ -129,5 +150,14 @@ class TaskListActivity : BaseActivity() {
         showProgressDialog(resources.getString(R.string.please_wait))
         FireStoreClass().addUpdateTaskList(this,mBoardDetails)
 
+    }
+
+    fun cardDetails(taskListPosition:Int, cardPosition:Int)
+    {
+        val intent=Intent(this,CardDetailsActivity::class.java)
+        intent.putExtra(Constants.BOARD_DETAIL,mBoardDetails)
+        intent.putExtra(Constants.TASK_LIST_ITEM_POSITION,taskListPosition)
+        intent.putExtra(Constants.CARD_LIST_ITEM_POSITION,cardPosition)
+        startActivityForResult(intent, CARD_DETAIL_REQUEST_CODE)
     }
 }

@@ -145,7 +145,10 @@ class FireStoreClass {
     }
 
     fun getBoardsList(activity: MainActivity){
-        mFireStore.collection(Constants.BOARDS).whereArrayContains(Constants.ASSIGNED_TO,getCurrentUserId()).get().addOnSuccessListener {
+        mFireStore.collection(Constants.BOARDS)
+                .whereArrayContains(Constants.ASSIGNED_TO,getCurrentUserId())
+                .get()
+                .addOnSuccessListener {
             document->
             Log.e(activity.javaClass.simpleName,document.documents.toString())
 
@@ -187,6 +190,43 @@ class FireStoreClass {
                 activity.hideProgressDialog()
                 Log.e(activity.javaClass.simpleName,"Error in fetching",e)
             }
+
+    }
+
+    fun getMembersDetails(activity: MembersActivity, email:String){
+        mFireStore.collection(Constants.USERS)
+                .whereEqualTo(Constants.EMAIL,email)
+                .get()
+                .addOnSuccessListener {
+                    document->
+                    if(document.documents.size>0)
+                    {
+                        val user=document.documents[0].toObject(User::class.java)!!
+                        activity.memberDetails(user)
+                    }
+                    else
+                    {
+                        activity.hideProgressDialog()
+                        activity.showErrorSnackBar("No such member found!")
+                    }
+                }
+
+    }
+
+    fun assignMemberToBoard(activity: MembersActivity, board: Board, user: User){
+        val assignMemberHashMap= HashMap<String,Any>()
+        assignMemberHashMap[Constants.ASSIGNED_TO]=board.assignedTo
+
+        mFireStore.collection(Constants.BOARDS)
+                .document(board.documentId)
+                .update(assignMemberHashMap)
+                .addOnSuccessListener {
+                    activity.memberAssignSuccess(user)
+                }.addOnFailureListener {
+                    e->
+                    activity.hideProgressDialog()
+                    Log.e(activity.javaClass.simpleName,"Error in updating",e)
+                }
 
     }
 }

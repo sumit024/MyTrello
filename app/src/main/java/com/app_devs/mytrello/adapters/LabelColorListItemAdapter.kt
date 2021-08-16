@@ -52,7 +52,7 @@ class LabelColorListItemAdapter(private val context: Context,
         fun onClick(pos:Int, color:String)
     }
 
-    fun setOnClickListener(onClickListener: CardListItemsAdapter.OnClickListener) {
+    fun setOnClickListener(onClickListener: OnClickListener) {
         this.mOnclickListener = onClickListener
     }
 

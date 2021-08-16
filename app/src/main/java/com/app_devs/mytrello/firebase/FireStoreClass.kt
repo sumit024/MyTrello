@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.app_devs.mytrello.activities.*
 import com.app_devs.mytrello.models.Board
+import com.app_devs.mytrello.models.Card
 import com.app_devs.mytrello.models.User
 import com.app_devs.mytrello.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -125,7 +126,7 @@ class FireStoreClass {
         }
     }
 
-    fun addUpdateTaskList(activity: TaskListActivity,board: Board)
+    fun addUpdateTaskList(activity: Activity,board: Board)
     {
         val taskListHashMap= HashMap<String, Any> ()
         taskListHashMap[Constants.TASK_LIST]=board.taskList
@@ -135,10 +136,16 @@ class FireStoreClass {
                 .update(taskListHashMap)
                 .addOnSuccessListener {
                     Log.e(activity.javaClass.simpleName,"TASK LIST UPDATED SUCCESSFULLY")
-                    activity.addUpdateTaskListSuccess()
+                    if(activity is TaskListActivity)
+                        activity.addUpdateTaskListSuccess()
+                    if(activity is CardDetailsActivity)
+                        activity.addUpdateTaskListSuccess()
                 }.addOnFailureListener{
                     exception->
-                    activity.hideProgressDialog()
+                    if(activity is TaskListActivity )
+                        activity.hideProgressDialog()
+                    else if(activity is CardDetailsActivity)
+                        activity.hideProgressDialog()
                     Log.e(activity.javaClass.simpleName,"Error in creating",exception)
                 }
 

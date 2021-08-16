@@ -37,7 +37,7 @@ open class CardListItemsAdapter(private val context: Context,private val list:Ar
     }
     class MyViewHolder(view: View):RecyclerView.ViewHolder(view)
 
-    interface OnClickListener{
+    interface OnClickListener : LabelColorListItemAdapter.OnClickListener {
         fun onClick(position: Int)
     }
     /**

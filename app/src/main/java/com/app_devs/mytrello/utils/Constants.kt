@@ -26,6 +26,7 @@ object Constants {
     const val EMAIL:String="email"
     const val TASK_LIST_ITEM_POSITION:String="taskListItemPosition"
     const val CARD_LIST_ITEM_POSITION:String="cardListItemPosition"
+    const val BOARD_MEMBERS_LIST:String="boardMembersList"
      fun showImageChooser(activity: Activity)
     {
         val intent= Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)

@@ -15,6 +15,7 @@ import com.app_devs.mytrello.firebase.FireStoreClass
 import com.app_devs.mytrello.models.Board
 import com.app_devs.mytrello.models.Card
 import com.app_devs.mytrello.models.Task
+import com.app_devs.mytrello.models.User
 import com.app_devs.mytrello.utils.Constants
 import kotlinx.android.synthetic.main.activity_my_profile.*
 import kotlinx.android.synthetic.main.activity_task_list.*
@@ -24,6 +25,8 @@ import java.text.FieldPosition
 class TaskListActivity : BaseActivity() {
     private lateinit var mBoardDetails:Board
     private lateinit var mBoardDocumentId:String
+
+    private lateinit var mAssignedMemberDetailsList:ArrayList<User>
 
     companion object{
         const val MEMBER_REQUEST_CODE=13
@@ -93,6 +96,10 @@ class TaskListActivity : BaseActivity() {
         val adapter=TaskListItemsAdapter(this,board.taskList)
         rv_task_list.adapter=adapter
         setUpActionBar()
+
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FireStoreClass().getAssignedMembersListDetail(this,mBoardDetails.assignedTo)
+
     }
 
     fun addUpdateTaskListSuccess()
@@ -158,6 +165,12 @@ class TaskListActivity : BaseActivity() {
         intent.putExtra(Constants.BOARD_DETAIL,mBoardDetails)
         intent.putExtra(Constants.TASK_LIST_ITEM_POSITION,taskListPosition)
         intent.putExtra(Constants.CARD_LIST_ITEM_POSITION,cardPosition)
+        intent.putExtra(Constants.BOARD_MEMBERS_LIST,mAssignedMemberDetailsList)
         startActivityForResult(intent, CARD_DETAIL_REQUEST_CODE)
+    }
+
+    fun boardMemberDetailsList(list:ArrayList<User>){
+        mAssignedMemberDetailsList=list
+        hideProgressDialog()
     }
 }

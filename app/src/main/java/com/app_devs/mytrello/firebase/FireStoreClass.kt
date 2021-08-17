@@ -178,7 +178,7 @@ class FireStoreClass {
         }
     }
 
-    fun getAssignedMembersListDetail(activity: MembersActivity,assignedTo:ArrayList<String>)
+    fun getAssignedMembersListDetail(activity: Activity,assignedTo:ArrayList<String>)
     {
         mFireStore.collection(Constants.USERS)
             .whereIn(Constants.ID,assignedTo)
@@ -191,10 +191,16 @@ class FireStoreClass {
                     val user= i.toObject(User::class.java)!!
                     userList.add(user)
                 }
-                activity.setUpMembersList(userList)
+                if(activity is MembersActivity)
+                    activity.setUpMembersList(userList)
+                if (activity is TaskListActivity)
+                    activity.boardMemberDetailsList(userList)
             }.addOnFailureListener{
                     e->
-                activity.hideProgressDialog()
+                    if(activity is MembersActivity)
+                        activity.hideProgressDialog()
+                    else if(activity is TaskListActivity)
+                        activity.hideProgressDialog()
                 Log.e(activity.javaClass.simpleName,"Error in fetching",e)
             }
 

@@ -25,6 +25,7 @@ abstract class LabelColorListDialog(
         setContentView(view)
         setCanceledOnTouchOutside(true)
         setCancelable(true)
+        setUpRecyclerView(view)
     }
     private fun setUpRecyclerView(view:View){
         view.tvTitle.text=title

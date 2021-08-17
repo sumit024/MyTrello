@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.app_devs.mytrello.R
 import com.app_devs.mytrello.models.User
+import com.app_devs.mytrello.utils.Constants
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_member.view.*
 
 class MembersAdapter(private val context: Context,private val list:ArrayList<User>)
     :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    private var onClickListener:OnClickListener?=null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
        return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_member,parent,false))
     }
@@ -28,6 +30,21 @@ class MembersAdapter(private val context: Context,private val list:ArrayList<Use
 
             holder.itemView.tv_member_name.text=model.name
             holder.itemView.tv_member_email.text=model.email
+
+            if(model.selected){
+                holder.itemView.iv_selected_member.visibility=View.VISIBLE
+            }else{
+                holder.itemView.iv_selected_member.visibility=View.GONE
+            }
+
+            holder.itemView.setOnClickListener {
+                if(onClickListener!=null){
+                    if(model.selected)
+                        onClickListener!!.onClick(position,model,Constants.UN_SELECT)
+                    else
+                        onClickListener!!.onClick(position,model,Constants.SELECT)
+                }
+            }
         }
 
     }
@@ -37,5 +54,13 @@ class MembersAdapter(private val context: Context,private val list:ArrayList<Use
     }
 
     class MyViewHolder(view: View):RecyclerView.ViewHolder(view)
+
+    interface OnClickListener{
+        fun onClick(pos:Int, user:User, action:String)
+    }
+
+    fun setOnClickListener(onClickListener: OnClickListener){
+        this.onClickListener=onClickListener
+    }
 
 }

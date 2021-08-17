@@ -117,7 +117,6 @@ class FireStoreClass {
             board.documentId=document.id
             activity.boardDetails(board)
 
-
         }.addOnFailureListener {
             e->
             activity.hideProgressDialog()

@@ -26,7 +26,7 @@ class TaskListActivity : BaseActivity() {
     private lateinit var mBoardDetails:Board
     private lateinit var mBoardDocumentId:String
 
-    private lateinit var mAssignedMemberDetailsList:ArrayList<User>
+    lateinit var mAssignedMemberDetailsList:ArrayList<User>
 
     companion object{
         const val MEMBER_REQUEST_CODE=13
@@ -87,15 +87,10 @@ class TaskListActivity : BaseActivity() {
     }
     fun boardDetails(board: Board)
     {
+
         mBoardDetails=board
         hideProgressDialog()
-        val addTaskList=Task(resources.getString(R.string.add_list))
-        board.taskList.add(addTaskList)
-        rv_task_list.layoutManager=LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
-        rv_task_list.setHasFixedSize(true)
-        val adapter=TaskListItemsAdapter(this,board.taskList)
-        rv_task_list.adapter=adapter
-        setUpActionBar()
+
 
         showProgressDialog(resources.getString(R.string.please_wait))
         FireStoreClass().getAssignedMembersListDetail(this,mBoardDetails.assignedTo)
@@ -172,5 +167,20 @@ class TaskListActivity : BaseActivity() {
     fun boardMemberDetailsList(list:ArrayList<User>){
         mAssignedMemberDetailsList=list
         hideProgressDialog()
+        val addTaskList=Task(resources.getString(R.string.add_list))
+        mBoardDetails.taskList.add(addTaskList)
+        rv_task_list.layoutManager=LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+        rv_task_list.setHasFixedSize(true)
+        val adapter=TaskListItemsAdapter(this,mBoardDetails.taskList)
+        rv_task_list.adapter=adapter
+        setUpActionBar()
+    }
+    fun updateCardsInTaskList(taskListPos:Int, cards:ArrayList<Card>)
+    {
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size-1)
+        mBoardDetails.taskList[taskListPos].cards=cards
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FireStoreClass().addUpdateTaskList(this,mBoardDetails)
+
     }
 }
